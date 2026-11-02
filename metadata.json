@@ -1,0 +1,6 @@
+{
+  "name": "Sun Digital Studio",
+  "description": "Complete photo and wedding studio in Kowdiar, Thiruvananthapuram, Kerala offering urgent passport photos, wedding photography, candid video, albums in 4 days, frames, and fine-art printing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
