@@ -66,10 +66,11 @@ export default function Services({ onSelectService }: ServicesProps) {
       const text = encodeURIComponent(
         `Hello Sun Digital Studio! I would like to inquire about "${service.title}".`
       );
-      window.open(
-        `https://wa.me/${STUDIO_CONFIG.contact.phoneClean}?text=${text}`,
-        '_blank'
-      );
+      const link = document.createElement('a');
+      link.href = `https://wa.me/${STUDIO_CONFIG.contact.phoneClean}?text=${text}`;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.click();
     }
   };
 

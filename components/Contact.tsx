@@ -21,19 +21,13 @@ export default function Contact({ initialService }: ContactProps) {
   const [phone, setPhone] = useState('');
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [message, setMessage] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   // Derived active service: user selection takes precedence, falls back to initialService or default
   const activeService = selectedService ?? initialService ?? 'Urgent Passport Photos';
 
-  // Submit via WhatsApp
-  const handleWhatsAppSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !phone.trim()) {
-      alert('Please enter your Name and Phone number to continue.');
-      return;
-    }
-
+  const getWhatsAppUrl = () => {
     const text = `Hello Sun Digital Studio!
 I would like to inquire about your services:
 
@@ -43,20 +37,34 @@ I would like to inquire about your services:
 *Requirements:* ${message.trim() || 'Please share more details and pricing.'}
 
 Looking forward to your reply!`;
+    return `https://wa.me/${STUDIO_CONFIG.contact.phoneClean}?text=${encodeURIComponent(text)}`;
+  };
 
-    const encodedText = encodeURIComponent(text);
-    const whatsappUrl = `https://wa.me/${STUDIO_CONFIG.contact.phoneClean}?text=${encodedText}`;
-
-    window.open(whatsappUrl, '_blank');
+  // Submit via WhatsApp
+  const handleWhatsAppSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !phone.trim()) {
+      setFormError('Please enter both your Name and Phone number to continue.');
+      return;
+    }
+    setFormError(null);
     setFormSubmitted(true);
+
+    // Open WhatsApp safely via anchor or direct navigation
+    const link = document.createElement('a');
+    link.href = getWhatsAppUrl();
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.click();
   };
 
   // Submit via Mailto link
   const handleEmailSubmit = () => {
     if (!name.trim() || !phone.trim()) {
-      alert('Please enter your Name and Phone number to continue.');
+      setFormError('Please enter both your Name and Phone number to continue.');
       return;
     }
+    setFormError(null);
 
     const subject = encodeURIComponent(
       `Studio Inquiry: ${activeService} - ${name}`
@@ -221,6 +229,18 @@ ${name}`
                 Fill in the details below and we will automatically open a pre-filled WhatsApp message for you.
               </p>
             </div>
+
+            {formError && (
+              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs sm:text-sm flex items-center justify-between">
+                <span>{formError}</span>
+                <button
+                  onClick={() => setFormError(null)}
+                  className="font-bold underline ml-2"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
 
             {formSubmitted && (
               <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex items-center justify-between">
